@@ -4,16 +4,30 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 // ❌ 문제점 1: lodash 전체를 import (트리쉐이킹 X)
-import _ from 'lodash';
+// import _ from 'lodash' => 사용하는 함수만 import
+import debounce from 'lodash/debounce';
 
 // ❌ 문제점 2: 무거운 moment 라이브러리 사용
-import moment from 'moment';
-import 'moment/locale/ko';
+// import moment from 'moment';
+// import 'moment/locale/ko'; => 경량화된 dayjs 사용
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import dynamic from 'next/dynamic';
 
 // ❌ 문제점 3: 무거운 코드에디터 라이브러리를 직접 import (코드 스플리팅 X)
 // Monaco Editor는 약 3MB 이상의 크기를 가진 매우 무거운 라이브러리입니다.
 // 직접 import시 해당 페이지를 방문하지 않아도 전체 번들에 포함되어 초기 로딩 속도가 저하될 수 있습니다.
-import Editor from '@monaco-editor/react';
+// import Editor from '@monaco-editor/react';
+// lazy loading 적용
+const Editor = dynamic(() => import('@monaco-editor/react'), {
+  loading: () => (
+    // 동적으로 로드될 때 표시될 로딩 UI
+    <div className="h-100 flex items-center justify-center bg-zinc-950 text-white rounded-md">
+      로딩 중...
+    </div>
+  ),
+  ssr: false,
+});
 
 export default function EditorPage() {
   const [content, setContent] = useState('// 여기에 코드를 작성하세요...\n');
@@ -21,7 +35,7 @@ export default function EditorPage() {
   const [language, setLanguage] = useState('javascript');
 
   // ❌ 문제점 1과 연관: lodash의 debounce 함수만 사용 (하지만 전체를 import 했음)
-  const handleContentChange = _.debounce((value: string | undefined) => {
+  const handleContentChange = debounce((value: string | undefined) => {
     if (value !== undefined) {
       setContent(value);
       console.log('Content updated:', value.length, 'characters');
@@ -29,7 +43,7 @@ export default function EditorPage() {
   }, 300);
 
   // ❌ 문제점 2와 연관: moment를 사용한 날짜 포맷팅
-  const currentDate = moment().format('YYYY년 MM월 DD일 HH:mm');
+  const currentDate = dayjs().format('YYYY년 MM월 DD일 HH:mm');
 
   const handleSave = () => {
     alert(

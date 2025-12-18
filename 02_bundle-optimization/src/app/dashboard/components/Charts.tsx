@@ -1,13 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 // ❌ 문제점 1: lodash 전체를 import (트리쉐이킹 X)
-import _ from "lodash";
+import sumBy from 'lodash/sumBy';
 
 // ❌ 문제점 2: 무거운 moment 라이브러리 사용
-import moment from "moment";
-import "moment/locale/ko";
+// import moment from "moment";
+// import "moment/locale/ko";
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 // ❌ 문제점 3: Chart.js와 react-chartjs-2(Chart.js 래핑 라이브러리)를 직접 import (코드 스플리팅 X)
 // Chart.js는 약 150KB의 무거운 시각화 라이브러리입니다.
@@ -23,49 +25,52 @@ import {
   PointElement,
   BarElement,
   ArcElement,
-} from "chart.js";
-import { Line, Bar, Pie } from "react-chartjs-2";
+} from 'chart.js';
+import { Line, Bar, Pie } from 'react-chartjs-2';
 
 // Chart.js가 그려지기 위해 필요한 컴포넌트들을 등록
 ChartJS.register(
-  Title,          // 제목 (차트 제목)
-  Tooltip,        // 툴팁 (차트 툴팁)
-  Legend,         // 범례 (차트 범례)
-  CategoryScale,  // 카테고리 축
-  LinearScale,    // 선형 축
-  LineElement,    // 선 요소 (Line 차트)
-  PointElement,   // 점 요소 (Line 차트)
-  BarElement,     // 바 요소 (Bar 차트)
-  ArcElement,     // 원 요소 (Pie 차트)
+  Title, // 제목 (차트 제목)
+  Tooltip, // 툴팁 (차트 툴팁)
+  Legend, // 범례 (차트 범례)
+  CategoryScale, // 카테고리 축
+  LinearScale, // 선형 축
+  LineElement, // 선 요소 (Line 차트)
+  PointElement, // 점 요소 (Line 차트)
+  BarElement, // 바 요소 (Bar 차트)
+  ArcElement // 원 요소 (Pie 차트)
 );
 
-export default function Charts({ salesData }: { 
-  salesData: { 
-    month: string, 
-    sales: number, 
-    profit: number, 
-    expenses: number 
-  }[] 
+export default function Charts({
+  salesData,
+}: {
+  salesData: {
+    month: string;
+    sales: number;
+    profit: number;
+    expenses: number;
+  }[];
 }) {
-
-  const [selectedChart, setSelectedChart] = useState<"line" | "bar" | "pie">("line");
+  const [selectedChart, setSelectedChart] = useState<'line' | 'bar' | 'pie'>(
+    'line'
+  );
 
   // Line 차트 데이터
   const lineChartData = {
     labels: salesData.map((d) => d.month),
     datasets: [
       {
-        label: "매출",
+        label: '매출',
         data: salesData.map((d) => d.sales),
-        borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
         tension: 0.4,
       },
       {
-        label: "순이익",
+        label: '순이익',
         data: salesData.map((d) => d.profit),
-        borderColor: "rgb(54, 162, 235)",
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: 'rgb(54, 162, 235)',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
         tension: 0.4,
       },
     ],
@@ -76,32 +81,32 @@ export default function Charts({ salesData }: {
     labels: salesData.map((d) => d.month),
     datasets: [
       {
-        label: "지출",
+        label: '지출',
         data: salesData.map((d) => d.expenses),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
     ],
   };
 
   // Pie 차트 데이터
   const pieChartData = {
-    labels: ["매출", "순이익", "지출"],
+    labels: ['매출', '순이익', '지출'],
     datasets: [
       {
         data: [
-          _.sumBy(salesData, "sales"),
-          _.sumBy(salesData, "profit"),
-          _.sumBy(salesData, "expenses"),
+          sumBy(salesData, 'sales'),
+          sumBy(salesData, 'profit'),
+          sumBy(salesData, 'expenses'),
         ],
         backgroundColor: [
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 99, 132, 0.6)",
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 99, 132, 0.6)',
         ],
         borderColor: [
-          "rgba(75, 192, 192, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 99, 132, 1)",
+          'rgba(75, 192, 192, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 99, 132, 1)',
         ],
         borderWidth: 1,
       },
@@ -114,11 +119,11 @@ export default function Charts({ salesData }: {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: 'top' as const,
       },
       title: {
         display: true,
-        text: `${moment().format("YYYY년")} 실적 현황`,
+        text: `${dayjs().format('YYYY년')} 실적 현황`,
       },
     },
   };
@@ -127,31 +132,31 @@ export default function Charts({ salesData }: {
     <>
       <div className="mb-6 flex gap-4">
         <button
-          onClick={() => setSelectedChart("line")}
+          onClick={() => setSelectedChart('line')}
           className={`px-4 py-2 rounded ${
-            selectedChart === "line"
-              ? "bg-blue-500 text-white"
-              : "bg-white text-gray-700 border"
+            selectedChart === 'line'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-700 border'
           }`}
         >
           라인 차트
         </button>
         <button
-          onClick={() => setSelectedChart("bar")}
+          onClick={() => setSelectedChart('bar')}
           className={`px-4 py-2 rounded ${
-            selectedChart === "bar"
-              ? "bg-blue-500 text-white"
-              : "bg-white text-gray-700 border"
+            selectedChart === 'bar'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-700 border'
           }`}
         >
           바 차트
         </button>
         <button
-          onClick={() => setSelectedChart("pie")}
+          onClick={() => setSelectedChart('pie')}
           className={`px-4 py-2 rounded ${
-            selectedChart === "pie"
-              ? "bg-blue-500 text-white"
-              : "bg-white text-gray-700 border"
+            selectedChart === 'pie'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-700 border'
           }`}
         >
           파이 차트
@@ -160,13 +165,13 @@ export default function Charts({ salesData }: {
 
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="h-96">
-          {selectedChart === "line" && (
+          {selectedChart === 'line' && (
             <Line data={lineChartData} options={chartOptions} />
           )}
-          {selectedChart === "bar" && (
+          {selectedChart === 'bar' && (
             <Bar data={barChartData} options={chartOptions} />
           )}
-          {selectedChart === "pie" && (
+          {selectedChart === 'pie' && (
             <Pie data={pieChartData} options={chartOptions} />
           )}
         </div>
