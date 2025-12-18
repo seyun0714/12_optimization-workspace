@@ -1,19 +1,24 @@
 import Link from 'next/link';
 
-// ❌ 문제점 1: lodash 전체를 import (트리쉐이킹 X)
 import round from 'lodash/round';
 import range from 'lodash/range';
 
 import Charts from './components/Charts';
 
-export default function DashboardPage() {
-  // 월별 상세 데이터 (실제로는 API로 데이터페칭)
-  const salesData = range(1, 13).map((month) => ({
+async function getSalesData(): Promise<
+  { month: string; sales: number; profit: number; expenses: number }[]
+> {
+  return range(1, 13).map((month) => ({
     month: `${month}월`,
     sales: Math.floor(Math.random() * 1000000) + 500000,
     profit: Math.floor(Math.random() * 500000) + 200000,
     expenses: Math.floor(Math.random() * 300000) + 100000,
   }));
+}
+
+export default async function DashboardPage() {
+  // 월별 상세 데이터 (실제로는 API로 데이터페칭)
+  const salesData = await getSalesData();
 
   return (
     <div className="min-h-screen bg-gray-50">
