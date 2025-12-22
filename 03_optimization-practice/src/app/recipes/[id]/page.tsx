@@ -1,12 +1,15 @@
-import { recipes } from "@/data/recipes";
-import { categories } from "@/data/categories";
-import { notFound } from "next/navigation";
-import Link from "next/link";
-// ⚠️ 번들 최적화 안됨: 동적 import 없이 일반 import로 사용
-import RelatedRecipes from "@/components/RelatedRecipes";
-import ShowStatisticsButton from "@/components/ShowStatisticsButton";
+import { recipes } from '@/data/recipes';
+import { categories } from '@/data/categories';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+const RelatedRecipes = dynamic(() => import('@/components/RelatedRecipes'));
+const ShowStatisticsButton = dynamic(
+  () => import('@/components/ShowStatisticsButton')
+);
 
-import { formatRecipeDate } from "@/utils/date";
+import { formatRecipeDate } from '@/utils/date';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
 
 interface RecipePageProps {
   params: Promise<{ id: string }>;
@@ -30,7 +33,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       {/* ⚠️ SEO 최적화 안됨: article 태그 미사용, 일반 div 사용 */}
-      
+
       {/* Breadcrumb - 시맨틱 태그 부족 */}
       <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
         <div className="flex items-center gap-2">
@@ -49,7 +52,9 @@ export default async function RecipePage({ params }: RecipePageProps) {
             {recipe.category}
           </Link>
           <span>/</span>
-          <span className="text-gray-900 dark:text-gray-100">{recipe.title}</span>
+          <span className="text-gray-900 dark:text-gray-100">
+            {recipe.title}
+          </span>
         </div>
       </div>
 
@@ -101,11 +106,14 @@ export default async function RecipePage({ params }: RecipePageProps) {
         </div>
       </div>
 
-      {/* ⚠️ 이미지 최적화 안됨: 일반 img 태그 사용, priority 없음, sizes 없음 */}
-      <div className="w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
-        <img
+      <div className="w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg relative">
+        <Image
           src={recipe.image}
           alt={recipe.title}
+          fill
+          sizes="100vw"
+          quality={80}
+          priority
           className="w-full h-full object-cover"
         />
       </div>
@@ -120,7 +128,9 @@ export default async function RecipePage({ params }: RecipePageProps) {
           {recipe.ingredients.map((ingredient, index) => (
             <li key={index} className="flex items-start gap-3">
               <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
-              <span className="text-gray-700 dark:text-gray-300">{ingredient}</span>
+              <span className="text-gray-700 dark:text-gray-300">
+                {ingredient}
+              </span>
             </li>
           ))}
         </ul>
@@ -155,12 +165,10 @@ export default async function RecipePage({ params }: RecipePageProps) {
         </div>
       )}
 
-      {/* ⚠️ 번들 최적화 안됨: 일반 import로 사용 (동적 import 없음) */}
       <ShowStatisticsButton recipe={recipe} />
 
-      {/* ⚠️ 번들 최적화 안됨: 일반 import로 사용 (동적 import 없음) */}
-      <RelatedRecipes 
-        currentRecipeId={recipe.id} 
+      <RelatedRecipes
+        currentRecipeId={recipe.id}
         category={recipe.category}
         allRecipes={recipes}
       />
@@ -177,4 +185,3 @@ export default async function RecipePage({ params }: RecipePageProps) {
     </div>
   );
 }
-

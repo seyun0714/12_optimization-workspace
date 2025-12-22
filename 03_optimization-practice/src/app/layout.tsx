@@ -1,13 +1,33 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import type { Metadata } from 'next';
+import './globals.css';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { Noto_Sans_KR, Playfair_Display, Roboto_Mono } from 'next/font/google';
 
 // ⚠️ SEO 최적화 안됨: 메타데이터가 너무 단순함
 export const metadata: Metadata = {
-  title: "맛있는 레시피",
-  description: "레시피 모음",
+  title: '맛있는 레시피',
+  description: '레시피 모음',
 };
+
+const notoSansKR = Noto_Sans_KR({
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  display: 'optional',
+  variable: '--font-noto-sans',
+});
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  display: 'optional',
+  variable: '--font-playfair',
+});
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'optional',
+  variable: '--font-roboto-mono',
+});
 
 export default function RootLayout({
   children,
@@ -16,16 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        {/* ⚠️ 폰트 최적화 안됨: 외부 CDN에서 폰트 로드 - 렌더링 블로킹 발생 */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Playfair+Display:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="antialiased">
+      <body
+        className={`${notoSansKR.variable} ${playfairDisplay.variable} ${robotoMono.variable} antialiased`}
+      >
         <Header />
         {/* ⚠️ SEO 최적화 안됨: main 태그 대신 div 사용 */}
         <div className="min-h-screen flex flex-col">
@@ -36,4 +49,3 @@ export default function RootLayout({
     </html>
   );
 }
-

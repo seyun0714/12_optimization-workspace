@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -15,15 +15,14 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  /* ⚠️ 폰트 최적화 안됨: 외부 CDN에서 폰트 로드 - 렌더링 블로킹 발생 */
-  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: '--font-noto-sans', -apple-system, BlinkMacSystemFont, system-ui,
+    sans-serif;
 }
 
 .font-display {
-  font-family: 'Playfair Display', serif;
+  font-family: '--font-playfair', serif;
 }
 
 .font-mono {
-  font-family: 'Roboto Mono', monospace;
+  font-family: '--font-roboto-mono', monospace;
 }
-

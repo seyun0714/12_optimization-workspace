@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Recipe } from '@/types/recipe';
+import Image from 'next/image';
 
 interface RelatedRecipesProps {
   currentRecipeId: string;
@@ -10,16 +11,22 @@ interface RelatedRecipesProps {
   allRecipes: Recipe[];
 }
 
-// ⚠️ 번들 최적화 안됨: 동적 import 없이 일반 import로 사용됨
-export default function RelatedRecipes({ currentRecipeId, category, allRecipes }: RelatedRecipesProps) {
+export default function RelatedRecipes({
+  currentRecipeId,
+  category,
+  allRecipes,
+}: RelatedRecipesProps) {
   const [relatedRecipes, setRelatedRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
     const related = allRecipes
-      .filter(recipe => recipe.id !== currentRecipeId && recipe.category === category)
+      .filter(
+        (recipe) =>
+          recipe.id !== currentRecipeId && recipe.category === category
+      )
       .sort((a, b) => b.views - a.views)
       .slice(0, 3);
-    
+
     setRelatedRecipes(related);
   }, [currentRecipeId, category, allRecipes]);
 
@@ -40,11 +47,13 @@ export default function RelatedRecipes({ currentRecipeId, category, allRecipes }
             href={`/recipes/${recipe.id}`}
             className="bg-white dark:bg-gray-900 rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden block"
           >
-            {/* ⚠️ 이미지 최적화 안됨: 일반 img 태그 사용 */}
-            <div className="w-full h-40">
-              <img
+            <div className="w-full h-40 relative">
+              <Image
                 src={recipe.image}
                 alt={recipe.title}
+                fill
+                sizes="100vw"
+                quality={75}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -63,4 +72,3 @@ export default function RelatedRecipes({ currentRecipeId, category, allRecipes }
     </div>
   );
 }
-

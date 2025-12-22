@@ -1,15 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import RecipeStatistics from '@/components/RecipeStatistics';
 import { Recipe } from '@/types/recipe';
+import dynamic from 'next/dynamic';
+
+const RecipeStatistics = dynamic(() => import('@/components/RecipeStatistics'));
 
 interface ShowStatisticsButtonProps {
   recipe: Recipe;
 }
 
-// ⚠️ 번들 최적화 안됨: RecipeStatistics를 일반 import로 사용 (동적 import 없음)
-export default function ShowStatisticsButton({ recipe }: ShowStatisticsButtonProps) {
+export default function ShowStatisticsButton({
+  recipe,
+}: ShowStatisticsButtonProps) {
   const [showStatistics, setShowStatistics] = useState(false);
 
   return (
@@ -20,9 +23,8 @@ export default function ShowStatisticsButton({ recipe }: ShowStatisticsButtonPro
       >
         {showStatistics ? '📊 통계 숨기기' : '📊 통계 보기'}
       </button>
-      
+
       {showStatistics && <RecipeStatistics recipe={recipe} />}
     </>
   );
 }
-
